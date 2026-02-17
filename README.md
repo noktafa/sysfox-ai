@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="logo.svg" alt="SysFox AI" width="480"/>
+</p>
+
 # sysfox-ai
 
 Diagnostic agent for the Dreamer banking POC infrastructure. Receives a question, uses LLM reasoning to run safe read-only commands across all 7 servers via SSH, and returns a structured diagnosis.
