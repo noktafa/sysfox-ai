@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     """All configuration via environment variables (or .env file)."""
 
     # --- LLM Provider ---
-    OPENAI_API_KEY: str = "dummy"
+    OPENAI_API_KEY: str = ""
     OPENAI_BASE_URL: str = "https://api.openai.com/v1"
     OPENAI_MODEL: str = "gpt-4o"
 
@@ -20,14 +20,14 @@ class Settings(BaseSettings):
     SSH_CONNECT_TIMEOUT: int = 10
     SSH_COMMAND_TIMEOUT: int = 30
 
-    # --- Dreamer Server IPs (public) ---
-    POC_LB_HOST: str = "46.101.153.18"
-    POC_APP1_HOST: str = "46.101.238.171"
-    POC_APP2_HOST: str = "139.59.153.72"
-    POC_RABBITMQ_HOST: str = "46.101.230.91"
-    POC_CONSUMER_HOST: str = "46.101.141.153"
-    POC_POSTGRESQL_HOST: str = "167.71.52.146"
-    POC_ELK_HOST: str = "46.101.180.12"
+    # --- Dreamer Server IPs (public) — must be set via env vars or .env ---
+    POC_LB_HOST: str = ""
+    POC_APP1_HOST: str = ""
+    POC_APP2_HOST: str = ""
+    POC_RABBITMQ_HOST: str = ""
+    POC_CONSUMER_HOST: str = ""
+    POC_POSTGRESQL_HOST: str = ""
+    POC_ELK_HOST: str = ""
 
     # --- Engine Limits ---
     MAX_DIAGNOSTIC_STEPS: int = 20
@@ -45,3 +45,19 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def validate_settings() -> list[str]:
+    """Return list of missing required settings. Empty list means all OK."""
+    missing = []
+    if not settings.OPENAI_API_KEY:
+        missing.append("OPENAI_API_KEY")
+    host_fields = [
+        "POC_LB_HOST", "POC_APP1_HOST", "POC_APP2_HOST",
+        "POC_RABBITMQ_HOST", "POC_CONSUMER_HOST",
+        "POC_POSTGRESQL_HOST", "POC_ELK_HOST",
+    ]
+    for field in host_fields:
+        if not getattr(settings, field):
+            missing.append(field)
+    return missing
